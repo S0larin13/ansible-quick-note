@@ -11,3 +11,11 @@ You can click the Preview link to take a look at your changes.
 
 
 ## Ansible ad-hoc
+
+### Installing packages yum 
+
+Let us *install* alt-php80*
+
+```
+ansible app -a "yum install -y alt-php80*"
+```
