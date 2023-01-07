@@ -40,5 +40,9 @@ ansible all -i hosts -m ping
 ansible all -i hosts -m shell -a "pwd" 
 ```
 
+##  Create a file 
 
+```
+ansible all -m file -a "name=testfile state=touch"
+```
 
