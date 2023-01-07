@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @moro13
+- 👋 Hi, I’m @moro13```
 - 👀 I’m interested in ansible, grafana, ...
 - 🌱 I’m currently learning aws, awx...
 - 💞️ I’m looking to collaborate on ...
@@ -19,3 +19,26 @@ Let us *install* alt-php80*
 ```
 ansible app -a "yum install -y alt-php80*"
 ```
+
+## List hosts
+
+ansible -i hosts all --list-hosts
+
+```
+ansible -i hosts all -m setup
+```
+
+## Ping all hosts (module ping)
+
+```
+ansible all -i hosts -m ping
+```
+
+## Run `pwd` on shell
+
+```
+ansible all -i hosts -m shell -a "pwd" 
+```
+
+
+
