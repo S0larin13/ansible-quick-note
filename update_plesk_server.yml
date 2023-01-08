@@ -15,12 +15,7 @@
 
   - when: updates.stdout_lines | length > 0
     block:
-    
-
-      - name: install
-        yum:
-          name: alt-php-ssa
-          state: present    
+        
  
       - name: Actualizacion yum update no alt-php
         yum:
@@ -71,24 +66,3 @@
   - debug:
       var: ansible_facts.services["nginx.service"]
 
-  - debug:
-      var: ansible_facts.services["mariadb.service"]
-
-  - debug:
-      var: ansible_facts.services["sw-cp-server.service"]
-
-  - debug:
-      var: ansible_facts.services["imunify360.service"]
-
-  - debug:
-      var: ansible_facts.services["plesk_apache_configtest.service"]
-
-  - debug:
-      var: ansible_facts.services["postfix.service"]
-
-  
-
-#  -  debug: msg="Estado de httpd"
-#   notify: chequeo de httpd
-#   changed_when: true
-#   register: estado_httpd
