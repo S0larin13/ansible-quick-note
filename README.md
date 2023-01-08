@@ -46,3 +46,6 @@ ansible all -i hosts -m shell -a "pwd"
 ansible all -m file -a "name=testfile state=touch"
 ```
 
+## Ansible playbook
+
+[a link](https://github.com/S0larin13/ansible-quick-note/blob/main/update_plesk_server.yml)
