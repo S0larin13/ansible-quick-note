@@ -24,10 +24,10 @@ ansible -i hosts all -m setup
 ansible all -i hosts -m ping
 ```
 
-## Run `pwd` on shell
+## Run `uptime` on shell
 
 ```
-ansible all -i hosts -m shell -a "pwd" 
+ansible all -i hosts -m shell -a "uptime" 
 ```
 
 ##  Create a file 
