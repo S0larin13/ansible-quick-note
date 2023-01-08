@@ -1,0 +1,30 @@
+- hosts: XXXXXX
+  vars_prompt:
+     - name: "user"
+       prompt: "you user"
+       private: no
+     - name: "password"
+       prompt: "pass"
+       private: yes
+     
+   
+  tasks:
+ 
+  - name: Create snapshot
+  #   when: "'XXXXX' in inventory_hostname"
+    vmware_guest_snapshot:
+     hostname:  hostname_vpshere
+     username: "{{ user }}"
+     password: "{{password}}" 
+     datacenter: datacenter_name
+     folder: /myfolder
+     name: "{{ item }}" 
+     state: present
+     snapshot_name:  "snapshot_{{ ansible_date_time.date }}"
+     description: snapshotupdate
+     validate_certs: False
+    with_items:
+      - "{{ groups['host_group'] }}"
+    register: vmware_output
+  - debug:
+      var: vmware_output
