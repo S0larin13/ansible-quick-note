@@ -1,0 +1,94 @@
+- hosts: plesk_servers 
+  serial: 3
+  tasks:
+  - name: check packages for updates
+#  shell: yum list updates | awk 'f;/Updated Packages/{f=1;}' | awk '{ print $1 }'
+    shell: yum list updates | awk '{ print $1 }' |grep -v alt-php*
+    changed_when: updates.stdout_lines | length > 0
+    args:
+      warn: false
+    register: updates
+
+  - name: Actualizacion debdebugg
+    debug:
+      msg: "Found {{ updates.stdout_lines | length }} packages to be updated:\n\n{{ updates.stdout }}"
+
+  - when: updates.stdout_lines | length > 0
+    block:
+    
+
+      - name: install
+        yum:
+          name: alt-php-ssa
+          state: present    
+ 
+      - name: Actualizacion yum update no alt-php
+        yum:
+          name: "*"
+          state: latest
+          exclude: alt-php*
+          update_only: yes
+    
+
+      - name: Lanzo actualiacion Plesk 
+#       shell: yum list updates | awk 'f;/Updated Packages/{f=1;}' | awk '{ print $1 }'
+        shell: "plesk installer upgrade PLESK_18_0_48"
+        register: updates
+
+      - name: Actualizacion chequeo si es necesario reboot
+        shell: needs-restarting -r
+        failed_when: false
+        register: reboot_required
+        changed_when: false
+
+ 
+    
+      - name: Actualizacion reinicio necesario
+        shell: sleep 3; reboot
+        ignore_errors: true
+        changed_when: false
+        async: 1
+        poll: 0
+        when: updates.stdout_lines | length > 0 and reboot_required.rc != 0
+        
+      - name: Actualizacion esperando reinicio
+        wait_for_connection:
+          timeout: 600
+          delay: 20
+        register: reboot_result
+        when: updates.stdout_lines | length > 0 and reboot_required.rc != 0
+    
+      - name: reboot time
+        debug:
+          msg: "The system rebooted in {{ reboot_result.elapsed }} seconds."
+
+  - name: Check for apache status
+    service_facts:
+
+  - debug:
+      var: ansible_facts.services["httpd.service"]
+
+  - debug:
+      var: ansible_facts.services["nginx.service"]
+
+  - debug:
+      var: ansible_facts.services["mariadb.service"]
+
+  - debug:
+      var: ansible_facts.services["sw-cp-server.service"]
+
+  - debug:
+      var: ansible_facts.services["imunify360.service"]
+
+  - debug:
+      var: ansible_facts.services["plesk_apache_configtest.service"]
+
+  - debug:
+      var: ansible_facts.services["postfix.service"]
+
+  
+
+#  -  debug: msg="Estado de httpd"
+#   notify: chequeo de httpd
+#   changed_when: true
+#   register: estado_httpd
