@@ -1,0 +1,44 @@
+---
+- hosts: group
+  gather_facts: true
+  tasks:
+     - set_fact:
+        down: "{{ansible_play_hosts_all|difference(ansible_play_hosts) }}"
+
+     - debug:
+         var: down
+       run_once: true 
+
+     - name: mail
+       mail:
+        host: smtp.mail.com
+        port: 25
+        from: mail1@mail.com
+        username: mail1@mail.com
+        password: password1
+        to: mail1@mail.com
+        subject: Ansible Fail
+        body:  Hello, Issue connectio ansible {{ down }}
+       delegate_to: localhost
+       run_once: true
+       when:  down != None 
+
+     - block:
+        - include_role:
+            name: role_1
+            tasks_from: "{{ item }}"
+          loop:
+            - task1
+            - task2
+      rescue:
+        - name: mail
+          mail: smtp.mail.com
+           host: 
+           port: 25
+           from: mail1@mail.com
+           username: mail1@mail.com
+           password: password1
+           to: mail1@mail.com
+           subject: Ansible Report {{ ansible_hostname }}
+           body:  Ansible ansible  {{ ansible_hostname }} Fail. Task {{ ansible_failed_task.name }}
+          delegate_to: localhost
